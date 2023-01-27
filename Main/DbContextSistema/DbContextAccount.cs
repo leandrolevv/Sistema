@@ -11,7 +11,7 @@ namespace Main.DbContextSistema
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            optionsBuilder.UseSqlServer();
+            optionsBuilder.UseSqlServer("Server=localhost;Database=Sistema;User ID=sa;Password=123456;Trusted_Connection=False; TrustServerCertificate=True;");
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
