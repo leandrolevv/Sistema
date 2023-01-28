@@ -1,6 +1,7 @@
 ﻿using System.Data;
 using System.Data.Common;
 using Main.DbContextSistema;
+using Main.Extension;
 using Main.Models;
 using Main.ViewModel;
 using Main.ViewModel.EditorViewModel;
@@ -20,7 +21,7 @@ namespace Main.Controllers
         {
             if (!ModelState.IsValid)
             {
-                return BadRequest(ModelState.Values);
+                return BadRequest(new ResponseViewModel<string>(ModelState.GetErrors()));
             }
 
             try

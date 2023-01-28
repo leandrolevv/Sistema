@@ -4,6 +4,7 @@ using Main.ViewModel;
 using Main.ViewModel.EditorViewModel;
 using Microsoft.AspNetCore.Mvc;
 using System.Data.Common;
+using Main.Extension;
 
 namespace Main.Controllers
 {
@@ -15,7 +16,7 @@ namespace Main.Controllers
         {
             if (!ModelState.IsValid)
             {
-                return BadRequest(ModelState.Values);
+                return BadRequest(new ResponseViewModel<string>(ModelState.GetErrors()));
             }
 
             try
