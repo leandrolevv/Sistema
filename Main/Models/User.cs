@@ -8,6 +8,6 @@
         public string Email { get; set; } = String.Empty;
         public string PasswordHash { get; set; } = String.Empty;
         public string linkProfileImage { get; set; } = String.Empty;
-        public List<Role> Roles { get; set; } = new List<Role>();
+        public IList<Role> Roles { get; set; } = new List<Role>();
     }
 }

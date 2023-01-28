@@ -3,6 +3,7 @@ using Main.Models;
 using Main.ViewModel.EditorViewModel;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using SecureIdentity.Password;
 
 namespace Main.Controllers
@@ -18,12 +19,15 @@ namespace Main.Controllers
                 return BadRequest(ModelState.Values);
             }
 
+            var roles = await context.Roles.Where(r => model.Roles.Contains(r.Slug)).ToListAsync();
+
             var user = new User()
             {
                 Email = model.Email,
                 Name = model.Name,
                 PasswordHash = PasswordHasher.Hash(model.Password),
-                Slug = model.Email.Replace("@", "-").Replace(".", "-")
+                Slug = model.Email.ToLower().Replace("@", "-").Replace(".", "-"),
+                Roles = roles
             };
 
             await context.Users.AddAsync(user);

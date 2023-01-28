@@ -15,6 +15,6 @@ namespace Main.ViewModel.EditorViewModel
         [Required(ErrorMessage = "O campo Senha é obrigatório.")]
         [MinLength(8, ErrorMessage = "A Senha deve ter ao menos 8 caracteres.")]
         public string Password { get; set; } = string.Empty;
-        public IList<EditorRoleViewModel> Roles { get; set; } = new List<EditorRoleViewModel>();
+        public IList<String> Roles { get; set; } = new List<String>();
     }
 }
