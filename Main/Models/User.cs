@@ -2,7 +2,7 @@
 {
     public class User
     {
-        public int Id { get; set; } = Int32.MinValue;
+        public int Id { get; set; }
         public string Slug { get; set; } = String.Empty;
         public string Name { get; set; } = String.Empty;
         public string Email { get; set; } = String.Empty;
