@@ -5,6 +5,7 @@ using Main.Extension;
 using Main.Models;
 using Main.ViewModel;
 using Main.ViewModel.EditorViewModel;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Formatters;
@@ -18,6 +19,7 @@ namespace Main.Controllers
     [ApiController]
     public class UserController : ControllerBase
     {
+        [Authorize(Roles = "administrador")]
         [HttpPost("/v1/users")]
         public async Task<ActionResult> CreateAsync([FromServices] DbContextAccount context,
             [FromBody] EditorUserViewModel model)
@@ -60,6 +62,7 @@ namespace Main.Controllers
             }
         }
 
+        [Authorize(Roles = "administrador")]
         [HttpGet("/v1/users")]
         public async Task<ActionResult> GetAsync([FromServices] DbContextAccount context,
             [FromQuery] int pageNumber = 0, [FromQuery] int pageSize = 25)
@@ -86,6 +89,7 @@ namespace Main.Controllers
             }
         }
 
+        [Authorize(Roles = "administrador")]
         [HttpGet("/v1/users/{id}")]
         public async Task<ActionResult> GetByIdAsync([FromServices] DbContextAccount context, [FromRoute] int id)
         {
@@ -113,6 +117,7 @@ namespace Main.Controllers
             }
         }
 
+        [Authorize(Roles = "administrador")]
         [HttpDelete("/v1/users/{id}")]
         public async Task<ActionResult> DeleteAsync([FromServices] DbContextAccount context, [FromRoute] int id)
         {
@@ -134,11 +139,11 @@ namespace Main.Controllers
             }
             catch (DbException)
             {
-                return BadRequest(new ResponseViewModel<string>("DB-03 - Ocorreu um erro no banco de dados"));
+                return BadRequest(new ResponseViewModel<string>("DB-04 - Ocorreu um erro no banco de dados"));
             }
             catch (Exception)
             {
-                return BadRequest(new ResponseViewModel<string>("EG-03 - Ocorreu um erro no servidor"));
+                return BadRequest(new ResponseViewModel<string>("EG-04 - Ocorreu um erro no servidor"));
             }
         }
     }
