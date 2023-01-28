@@ -134,11 +134,11 @@ namespace Main.Controllers
             }
             catch (DbException)
             {
-                return BadRequest(new ResponseViewModel<string>("DB-03 - Ocorreu um erro no banco de dados"));
+                return BadRequest(new ResponseViewModel<string>("DB-04 - Ocorreu um erro no banco de dados"));
             }
             catch (Exception)
             {
-                return BadRequest(new ResponseViewModel<string>("EG-03 - Ocorreu um erro no servidor"));
+                return BadRequest(new ResponseViewModel<string>("EG-04 - Ocorreu um erro no servidor"));
             }
         }
     }

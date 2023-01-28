@@ -1,6 +1,7 @@
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using Main.DbContextSistema;
+using Main.Services;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -10,6 +11,7 @@ builder.Services.AddDbContext<DbContextAccount>(options => options.UseSqlServer(
 builder.Services.AddControllers()
     .ConfigureApiBehaviorOptions(options => options.SuppressModelStateInvalidFilter = true)
     .AddJsonOptions(options => options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles);
+builder.Services.AddTransient<TokenService>();
 
 var app = builder.Build();
 app.MapControllers();
