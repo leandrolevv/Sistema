@@ -1,7 +1,10 @@
 ﻿using Main.DbContextSistema;
 using Main.Models;
+using Main.ViewModel;
 using Main.ViewModel.EditorViewModel;
 using Microsoft.AspNetCore.Mvc;
+using System.Data.Common;
+using Main.Extension;
 
 namespace Main.Controllers
 {
@@ -13,19 +16,30 @@ namespace Main.Controllers
         {
             if (!ModelState.IsValid)
             {
-                return BadRequest(ModelState.Values);
+                return BadRequest(new ResponseViewModel<string>(ModelState.GetErrors()));
             }
 
-            var role = new Role()
+            try
             {
-                Name = model.Name,
-                Slug = model.Name.ToLower().Replace(" ", "_")
-            };
+                var role = new Role()
+                {
+                    Name = model.Name,
+                    Slug = model.Name.ToLower().Replace(" ", "_")
+                };
 
-            await context.AddAsync(role);
-            await context.SaveChangesAsync();
+                await context.AddAsync(role);
+                await context.SaveChangesAsync();
 
-            return Created($"v1/roles/{role.Slug}", role);
+                return Created($"v1/roles/{role.Slug}", new ResponseViewModel<Role>(role));
+            }
+            catch (DbException)
+            {
+                return BadRequest(new ResponseViewModel<string>("DB-01 - Ocorreu um erro no banco de dados"));
+            }
+            catch (Exception)
+            {
+                return BadRequest(new ResponseViewModel<string>("EG-01 - Ocorreu um erro no servidor") );
+            }
         }
     }
 }
