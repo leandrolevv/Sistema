@@ -10,13 +10,14 @@ namespace Main.DbContextSistema.Mappings
         {
             builder.ToTable("User");
             builder.HasKey(x => x.Id);
-            builder.Property(x => x.Id).ValueGeneratedOnAdd();
+            builder.Property(x => x.Id).ValueGeneratedOnAdd().UseIdentityColumn();
             builder.Property(x => x.Name).HasColumnType("VARCHAR").HasMaxLength(256).IsRequired();
             builder.Property(x => x.Email).HasColumnType("NVARCHAR").HasMaxLength(256).IsRequired();
             builder.Property(x => x.Slug).HasColumnType("VARCHAR").HasMaxLength(256).IsRequired();
             builder.Property(x => x.PasswordHash).HasColumnType("VARCHAR").HasMaxLength(500).IsRequired();
             builder.Property(x => x.linkProfileImage).HasColumnType("VARCHAR").HasMaxLength(500);
-            
+            builder.HasIndex(x => x.Email, "IDX_USER_EMAIL").IsUnique();
+
             builder
                 .HasMany(x => x.Roles)
                 .WithMany(x => x.Users)

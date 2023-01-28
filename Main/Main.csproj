@@ -13,6 +13,7 @@
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
     <PackageReference Include="Microsoft.EntityFrameworkcore.SqlServer" Version="7.0.2" />
+    <PackageReference Include="SecureIdentity" Version="1.0.4" />
   </ItemGroup>
 
 </Project>

@@ -3,6 +3,7 @@ using Main.DbContextSistema;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Main.Migrations
 {
     [DbContext(typeof(DbContextAccount))]
-    partial class DbContextAccountModelSnapshot : ModelSnapshot
+    [Migration("20230128164919_AdicionandoIdColumn")]
+    partial class AdicionandoIdColumn
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -40,9 +43,6 @@ namespace Main.Migrations
                         .HasColumnType("VARCHAR");
 
                     b.HasKey("Id");
-
-                    b.HasIndex(new[] { "Slug" }, "IDX_ROLE_SLUG")
-                        .IsUnique();
 
                     b.ToTable("Role", (string)null);
                 });
@@ -81,9 +81,6 @@ namespace Main.Migrations
                         .HasColumnType("VARCHAR");
 
                     b.HasKey("Id");
-
-                    b.HasIndex(new[] { "Email" }, "IDX_USER_EMAIL")
-                        .IsUnique();
 
                     b.ToTable("User", (string)null);
                 });
