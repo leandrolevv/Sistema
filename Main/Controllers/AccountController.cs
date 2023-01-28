@@ -13,7 +13,6 @@ namespace Main.Controllers
     [ApiController]
     public class AccountController : ControllerBase
     {
-        [Authorize(Roles = "administrador")]
         [HttpGet("/v1/Login")]
         public async Task<ActionResult> Get([FromServices] DbContextAccount context, [FromServices] TokenService tokenService, [FromBody] LoginViewModel model)
         {
