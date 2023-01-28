@@ -15,13 +15,11 @@ namespace Main.Services
     {
         public string GetToken(User user)
         {
-            var key = Encoding.ASCII.GetBytes(Configuration.JwtToken); 
-            
             var jwtHandler = new JwtSecurityTokenHandler();
             var tokenDescriptor = new SecurityTokenDescriptor()
             {
                 Expires = DateTime.Now.AddHours(8),
-                SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256),
+                SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(Configuration.JwtToken), SecurityAlgorithms.HmacSha256),
                 Subject = new ClaimsIdentity(user.GetClaims())
             };
             

@@ -5,12 +5,15 @@ using Main.ViewModel.EditorViewModel;
 using Microsoft.AspNetCore.Mvc;
 using System.Data.Common;
 using Main.Extension;
+using Microsoft.AspNetCore.Authorization;
+using System.Data;
 
 namespace Main.Controllers
 {
     [ApiController]
     public class RoleController : ControllerBase
     {
+        [Authorize(Roles = "administrador")]
         [HttpPost("v1/roles")]
         public async Task<ActionResult> CreateAsync([FromServices] DbContextAccount context, [FromBody] EditorRoleViewModel model)
         {
