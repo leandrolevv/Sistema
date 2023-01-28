@@ -2,6 +2,7 @@
 using Main.Models;
 using Main.ViewModel.EditorViewModel;
 using Microsoft.AspNetCore.Mvc;
+using System.Data.Common;
 
 namespace Main.Controllers
 {
@@ -16,16 +17,27 @@ namespace Main.Controllers
                 return BadRequest(ModelState.Values);
             }
 
-            var role = new Role()
+            try
             {
-                Name = model.Name,
-                Slug = model.Name.ToLower().Replace(" ", "_")
-            };
+                var role = new Role()
+                {
+                    Name = model.Name,
+                    Slug = model.Name.ToLower().Replace(" ", "_")
+                };
 
-            await context.AddAsync(role);
-            await context.SaveChangesAsync();
+                await context.AddAsync(role);
+                await context.SaveChangesAsync();
 
-            return Created($"v1/roles/{role.Slug}", role);
+                return Created($"v1/roles/{role.Slug}", role);
+            }
+            catch (DbException)
+            {
+                return BadRequest("DB-01 - Ocorreu um erro no banco de dados");
+            }
+            catch (Exception)
+            {
+                return BadRequest("EG-01 - Ocorreu um erro no servidor");
+            }
         }
     }
 }
