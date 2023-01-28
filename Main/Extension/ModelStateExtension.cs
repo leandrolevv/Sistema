@@ -9,7 +9,6 @@ namespace Main.Extension
             List<string> errors = new List<string>();
             foreach (var values in modelState.Values)
             {
-                //values.Errors.Select(x => x.ErrorMessage);
                 errors.AddRange(values.Errors.Select(x => x.ErrorMessage));
             }
 
