@@ -7,6 +7,7 @@ using Main.ViewModel;
 using Main.ViewModel.EditorViewModel;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Formatters;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -17,7 +18,7 @@ namespace Main.Controllers
     [ApiController]
     public class UserController : ControllerBase
     {
-        [HttpPost("v1/users")]
+        [HttpPost("/v1/users")]
         public async Task<ActionResult> CreateAsync([FromServices] DbContextAccount context,
             [FromBody] EditorUserViewModel model)
         {
@@ -77,11 +78,11 @@ namespace Main.Controllers
             }
             catch (DbException)
             {
-                return BadRequest(new ResponseViewModel<string>("DB-01 - Ocorreu um erro no banco de dados"));
+                return BadRequest(new ResponseViewModel<string>("DB-02 - Ocorreu um erro no banco de dados"));
             }
             catch (Exception)
             {
-                return BadRequest(new ResponseViewModel<string>("EG-01 - Ocorreu um erro no servidor"));
+                return BadRequest(new ResponseViewModel<string>("EG-02 - Ocorreu um erro no servidor"));
             }
         }
 
@@ -95,15 +96,49 @@ namespace Main.Controllers
                     .AsNoTracking()
                     .FirstOrDefaultAsync(x => x.Id == id);
 
+                if (user == null)
+                {
+                    return BadRequest(new ResponseViewModel<string>("Não foi possível encontrar o usuário"));
+                }
+
                 return Ok(new ResponseViewModel<User>(user));
             }
             catch (DbException)
             {
-                return BadRequest(new ResponseViewModel<string>("DB-01 - Ocorreu um erro no banco de dados"));
+                return BadRequest(new ResponseViewModel<string>("DB-03 - Ocorreu um erro no banco de dados"));
             }
             catch (Exception)
             {
-                return BadRequest(new ResponseViewModel<string>("EG-01 - Ocorreu um erro no servidor"));
+                return BadRequest(new ResponseViewModel<string>("EG-03 - Ocorreu um erro no servidor"));
+            }
+        }
+
+        [HttpDelete("/v1/users/{id}")]
+        public async Task<ActionResult> DeleteAsync([FromServices] DbContextAccount context, [FromRoute] int id)
+        {
+            try
+            {
+                var user = await context
+                    .Users
+                    .FirstOrDefaultAsync(x => x.Id == id);
+
+                if (user == null)
+                {
+                    return BadRequest(new ResponseViewModel<string>("Não foi possível encontrar o usuário"));
+                }
+
+                context.Remove(user);
+                await context.SaveChangesAsync();
+
+                return Ok(new ResponseViewModel<dynamic>(new { sucesso = "Deletado com sucesso" }));
+            }
+            catch (DbException)
+            {
+                return BadRequest(new ResponseViewModel<string>("DB-03 - Ocorreu um erro no banco de dados"));
+            }
+            catch (Exception)
+            {
+                return BadRequest(new ResponseViewModel<string>("EG-03 - Ocorreu um erro no servidor"));
             }
         }
     }
