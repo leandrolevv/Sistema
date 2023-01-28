@@ -1,5 +1,6 @@
 ﻿using Main.DbContextSistema;
 using Main.Models;
+using Main.ViewModel;
 using Main.ViewModel.EditorViewModel;
 using Microsoft.AspNetCore.Mvc;
 using System.Data.Common;
@@ -28,15 +29,15 @@ namespace Main.Controllers
                 await context.AddAsync(role);
                 await context.SaveChangesAsync();
 
-                return Created($"v1/roles/{role.Slug}", role);
+                return Created($"v1/roles/{role.Slug}", new ResponseViewModel<Role>(role));
             }
             catch (DbException)
             {
-                return BadRequest("DB-01 - Ocorreu um erro no banco de dados");
+                return BadRequest(new ResponseViewModel<string>("DB-01 - Ocorreu um erro no banco de dados"));
             }
             catch (Exception)
             {
-                return BadRequest("EG-01 - Ocorreu um erro no servidor");
+                return BadRequest(new ResponseViewModel<string>("EG-01 - Ocorreu um erro no servidor") );
             }
         }
     }

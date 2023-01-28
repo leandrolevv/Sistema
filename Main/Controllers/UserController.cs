@@ -1,6 +1,8 @@
-﻿using System.Data.Common;
+﻿using System.Data;
+using System.Data.Common;
 using Main.DbContextSistema;
 using Main.Models;
+using Main.ViewModel;
 using Main.ViewModel.EditorViewModel;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -27,7 +29,7 @@ namespace Main.Controllers
 
                 if (roles.IsNullOrEmpty())
                 {
-                    return BadRequest("O grupo informado é inválido");
+                    return BadRequest(new ResponseViewModel<string>("O grupo informado é inválido"));
                 }
 
                 var user = new User()
@@ -42,15 +44,15 @@ namespace Main.Controllers
                 await context.Users.AddAsync(user);
                 await context.SaveChangesAsync();
 
-                return Created($"/{user.Slug}", user);
+                return Created($"/{user.Slug}", new ResponseViewModel<User>(user));
             }
             catch (DbException)
             {
-                return BadRequest("DB-01 - Ocorreu um erro no banco de dados");
+                return BadRequest(new ResponseViewModel<string>("DB-01 - Ocorreu um erro no banco de dados"));
             }
             catch (Exception)
             {
-                return BadRequest("EG-01 - Ocorreu um erro no servidor");
+                return BadRequest(new ResponseViewModel<string>("EG-01 - Ocorreu um erro no servidor"));
             }
         }
     }
