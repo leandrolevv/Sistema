@@ -27,7 +27,7 @@ namespace Main.Controllers
                 var role = new Role()
                 {
                     Name = model.Name,
-                    Slug = model.Name.ToLower().Replace(" ", "_")
+                    Slug = model.Name.CreateSlug()
                 };
 
                 await context.AddAsync(role);
@@ -37,11 +37,11 @@ namespace Main.Controllers
             }
             catch (DbException)
             {
-                return BadRequest(new ResponseViewModel<string>("DB-01 - Ocorreu um erro no banco de dados"));
+                return BadRequest(new ResponseViewModel<string>("DB-05 - Ocorreu um erro no banco de dados"));
             }
             catch (Exception)
             {
-                return BadRequest(new ResponseViewModel<string>("EG-01 - Ocorreu um erro no servidor") );
+                return BadRequest(new ResponseViewModel<string>("EG-05 - Ocorreu um erro no servidor") );
             }
         }
     }

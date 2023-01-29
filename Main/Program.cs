@@ -6,13 +6,12 @@ using Main.DbContextSistema;
 using Main.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 
 var builder = WebApplication.CreateBuilder(args);
 var _connectionString = builder.Configuration.GetConnectionString("Default");
 Configuration.JwtToken = Encoding.ASCII.GetBytes(builder.Configuration.GetValue<string>("JwtToken"));
+Configuration.AzureBlobConnectionString = builder.Configuration.GetValue<string>("AzureBlobConnectionString");
 
 builder.Services.AddDbContext<DbContextAccount>(options => options.UseSqlServer(_connectionString));
 builder.Services.AddControllers()
