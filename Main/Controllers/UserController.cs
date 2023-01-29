@@ -1,8 +1,10 @@
-﻿using System.Data;
+﻿using System.ComponentModel;
+using System.Data;
 using System.Data.Common;
+using System.IO;
 using System.Reflection.Metadata;
 using System.Text.RegularExpressions;
-using Azure.Storage.Blobs;
+using Azure;
 using Main.DbContextSistema;
 using Main.Extension;
 using Main.Models;
@@ -14,8 +16,10 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Formatters;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Azure;
+using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.WindowsAzure.Storage;
+using Microsoft.WindowsAzure.Storage.Blob;
 using SecureIdentity.Password;
 
 namespace Main.Controllers
@@ -165,24 +169,29 @@ namespace Main.Controllers
                     return BadRequest(new ResponseViewModel<string>("Não foi possível encontrar o usuário"));
                 }
 
-                var imageName = User.Identity.Name + "_ProfilePic";
+                var imageName = User.Identity.Name + "_ProfilePic.jpeg";
                 var imageBase64 = new Regex(@"^data:image\/[a-z]+;base64,").Replace(model.Base64Image, "");
                 var file = Convert.FromBase64String(imageBase64);
-                var blobClient = new BlobClient(Configuration.AzureBlobConnectionString, "containeruserimages",
-                    imageName);
-
-
-                using(var stream = new MemoryStream(file))
+                
+                CloudStorageAccount cloudStorageAccount = CloudStorageAccount.Parse(Configuration.AzureBlobConnectionString);
+                CloudBlobClient cloudBlobClient = cloudStorageAccount.CreateCloudBlobClient();
+                CloudBlobContainer cloudBlobContainer = cloudBlobClient.GetContainerReference("containeruserimages");
+                var blob = await cloudBlobContainer.GetBlobReferenceFromServerAsync(imageName);
+                await blob.DeleteIfExistsAsync();
+                
+                using (var stream = new MemoryStream(file))
                 {
-                    await blobClient.UploadAsync(stream);
+                    await blob.DownloadToStreamAsync(stream);
                 }
 
-                user.linkProfileImage = blobClient.Uri.AbsoluteUri;
-
-               context.Update(user);
-               await context.SaveChangesAsync(); 
+                context.Update(user);
+                await context.SaveChangesAsync(); 
 
                 return Ok(user);
+            }
+            catch (RequestFailedException)
+            {
+                return BadRequest(new ResponseViewModel<string>("AZ-08 - Ocorreu um erro no upload da imagem"));
             }
             catch (DbException)
             {
