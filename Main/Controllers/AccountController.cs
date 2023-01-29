@@ -3,6 +3,7 @@ using Main.Extension;
 using Main.Models;
 using Main.Services;
 using Main.ViewModel;
+using Main.ViewModel.AccountViewModel;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -47,7 +48,7 @@ namespace Main.Controllers
 
         [HttpPost("/v1/CreateAccount")]
         public async Task<ActionResult> CreateAsync([FromServices] DbContextAccount context,
-            [FromBody] AccountViewModel model)
+            [FromBody] EditorAccountViewModel model)
         {
             if (!ModelState.IsValid)
             {

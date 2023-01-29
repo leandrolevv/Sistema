@@ -2,7 +2,7 @@
 using System.ComponentModel.DataAnnotations;
 using Main.Models;
 
-namespace Main.ViewModel.EditorViewModel
+namespace Main.ViewModel.UserViewModel
 {
     public class EditorUserViewModel
     {
@@ -15,6 +15,6 @@ namespace Main.ViewModel.EditorViewModel
         [Required(ErrorMessage = "O campo Senha é obrigatório.")]
         [MinLength(8, ErrorMessage = "A Senha deve ter ao menos 8 caracteres.")]
         public string Password { get; set; } = string.Empty;
-        public IList<String> Roles { get; set; } = new List<String>();
+        public IList<string> Roles { get; set; } = new List<string>();
     }
 }

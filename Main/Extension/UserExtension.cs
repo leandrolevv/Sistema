@@ -9,7 +9,7 @@ namespace Main.Extension
         {
             var claims = new List<Claim>();
 
-            claims.Add(new Claim(ClaimTypes.Email, user.Email));
+            claims.Add(new Claim(ClaimTypes.Name, user.Email));
             claims.AddRange(user.Roles.Select(x => new Claim(ClaimTypes.Role, x.Slug)));
 
             return claims;

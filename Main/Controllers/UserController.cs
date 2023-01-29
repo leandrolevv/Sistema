@@ -1,16 +1,20 @@
 ﻿using System.Data;
 using System.Data.Common;
+using System.Reflection.Metadata;
+using System.Text.RegularExpressions;
+using Azure.Storage.Blobs;
 using Main.DbContextSistema;
 using Main.Extension;
 using Main.Models;
 using Main.ViewModel;
-using Main.ViewModel.EditorViewModel;
+using Main.ViewModel.UserViewModel;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Formatters;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Azure;
 using Microsoft.IdentityModel.Tokens;
 using SecureIdentity.Password;
 
@@ -144,6 +148,49 @@ namespace Main.Controllers
             catch (Exception)
             {
                 return BadRequest(new ResponseViewModel<string>("EG-04 - Ocorreu um erro no servidor"));
+            }
+        }
+
+        [HttpPut("/v1/users/ChangePic")]
+        public async Task<ActionResult> PostAsync([FromServices] DbContextAccount context, [FromBody] ChangePicUserViewModel model)
+        {
+            try
+            {
+                var user = await context
+                    .Users
+                    .FirstOrDefaultAsync(x => x.Email == User.Identity.Name);
+
+                if (user == null)
+                {
+                    return BadRequest(new ResponseViewModel<string>("Não foi possível encontrar o usuário"));
+                }
+
+                var imageName = User.Identity.Name + "_ProfilePic";
+                var imageBase64 = new Regex(@"^data:image\/[a-z]+;base64,").Replace(model.Base64Image, "");
+                var file = Convert.FromBase64String(imageBase64);
+                var blobClient = new BlobClient(Configuration.AzureBlobConnectionString, "containeruserimages",
+                    imageName);
+
+
+                using(var stream = new MemoryStream(file))
+                {
+                    await blobClient.UploadAsync(stream);
+                }
+
+                user.linkProfileImage = blobClient.Uri.AbsoluteUri;
+
+               context.Update(user);
+               await context.SaveChangesAsync(); 
+
+                return Ok(user);
+            }
+            catch (DbException)
+            {
+                return BadRequest(new ResponseViewModel<string>("DB-08 - Ocorreu um erro no banco de dados"));
+            }
+            catch (Exception)
+            {
+                return BadRequest(new ResponseViewModel<string>("EG-08 - Ocorreu um erro no servidor"));
             }
         }
     }
