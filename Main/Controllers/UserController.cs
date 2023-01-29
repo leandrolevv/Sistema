@@ -43,7 +43,7 @@ namespace Main.Controllers
                     Email = model.Email,
                     Name = model.Name,
                     PasswordHash = PasswordHasher.Hash(model.Password),
-                    Slug = model.Email.ToLower().Replace("@", "-").Replace(".", "-"),
+                    Slug = model.Email.CreateSlug(),
                     Roles = roles
                 };
 
