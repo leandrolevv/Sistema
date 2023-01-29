@@ -4,5 +4,6 @@
     {
         public static byte[] JwtToken { get; set; }
         public static string AzureBlobConnectionString { get; set; }
+        public static string AzureBlobContainerImageUser { get; set; }
     }
 }

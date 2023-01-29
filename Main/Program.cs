@@ -12,6 +12,7 @@ var builder = WebApplication.CreateBuilder(args);
 var _connectionString = builder.Configuration.GetConnectionString("Default");
 Configuration.JwtToken = Encoding.ASCII.GetBytes(builder.Configuration.GetValue<string>("JwtToken"));
 Configuration.AzureBlobConnectionString = builder.Configuration.GetValue<string>("AzureBlobConnectionString");
+Configuration.AzureBlobContainerImageUser = builder.Configuration.GetValue<string>("AzureBlobContainerImageUser");
 
 builder.Services.AddDbContext<DbContextAccount>(options => options.UseSqlServer(_connectionString));
 builder.Services.AddControllers()
