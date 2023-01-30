@@ -4,7 +4,6 @@ using Main.Models;
 using Main.Services;
 using Main.ViewModel;
 using Main.ViewModel.AccountViewModel;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using SecureIdentity.Password;

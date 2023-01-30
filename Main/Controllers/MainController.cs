@@ -8,7 +8,7 @@ namespace Main.Controllers
         [HttpGet("/")]
         public ActionResult Get()
         {
-            return Ok();
+            return Ok("Serviço ativo");
         }
     }
 }

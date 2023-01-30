@@ -1,10 +1,4 @@
-﻿using System.ComponentModel;
-using System.Data;
-using System.Data.Common;
-using System.IO;
-using System.Net;
-using System.Reflection.Metadata;
-using System.Text.RegularExpressions;
+﻿using System.Data.Common;
 using Azure;
 using Main.DbContextSistema;
 using Main.Extension;
@@ -13,15 +7,9 @@ using Main.Services.CloudFunctions;
 using Main.ViewModel;
 using Main.ViewModel.UserViewModel;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Formatters;
-using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
-using Microsoft.WindowsAzure.Storage;
-using Microsoft.WindowsAzure.Storage.Blob;
 using SecureIdentity.Password;
 
 namespace Main.Controllers
