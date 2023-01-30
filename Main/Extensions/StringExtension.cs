@@ -8,11 +8,10 @@ namespace Main.Extension
     {
         public static string CreateSlug(this string text)
         {
-            return text.ToLower().ReplaceSeparators().ReplaceSpecialCharacters();
+            return text.ToLower().ReplaceTabs().ReplaceSpecialCharacters();
         }
 
-        //Curiosidade: Os blocos abaixo foram criados com ChatGPT
-        private static string ReplaceSpecialCharacters(this string text)
+        public static string ReplaceSpecialCharacters(this string text)
         {
             string normalizedString = text.Normalize(NormalizationForm.FormD);
             StringBuilder stringBuilder = new StringBuilder();
@@ -29,7 +28,7 @@ namespace Main.Extension
             return Regex.Replace(stringBuilder.ToString(), @"[^\w\s]", "").Trim();
         }
 
-        private static string ReplaceSeparators(this string text)
+        public static string ReplaceTabs(this string text)
         {
             string pattern = @"[@.\s]+";
             string replacement = "_";
