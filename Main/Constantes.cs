@@ -5,7 +5,7 @@
         public static class RoleConstante
         {
             public const string ADMIN = "administrador";
-            public const string USER = "usuário";
+            public const string USER = "usuario";
         }
     }
 }

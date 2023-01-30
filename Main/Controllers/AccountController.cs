@@ -15,7 +15,7 @@ namespace Main.Controllers
     public class AccountController : ControllerBase
     {
         [HttpPost("/v1/Login")]
-        public async Task<ActionResult> Get([FromServices] DbContextAccount context, [FromServices] TokenService tokenService, [FromBody] LoginViewModel model)
+        public async Task<ActionResult> GetAsync([FromServices] DbContextAccount context, [FromServices] TokenService tokenService, [FromBody] LoginViewModel model)
         {
             try
             {

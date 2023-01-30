@@ -69,6 +69,7 @@ namespace Main.Controllers
             {
                 var users = await context
                     .Users
+                    .Include(x => x.Roles)
                     .AsNoTracking()
                     .OrderBy(x => x.Id)
                     .Skip(pageNumber * pageSize)
@@ -95,6 +96,7 @@ namespace Main.Controllers
             {
                 var user = await context
                     .Users
+                    .Include(x => x.Roles)
                     .AsNoTracking()
                     .FirstOrDefaultAsync(x => x.Id == id);
 
