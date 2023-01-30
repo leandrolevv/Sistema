@@ -2,12 +2,14 @@
 using System.Data;
 using System.Data.Common;
 using System.IO;
+using System.Net;
 using System.Reflection.Metadata;
 using System.Text.RegularExpressions;
 using Azure;
 using Main.DbContextSistema;
 using Main.Extension;
 using Main.Models;
+using Main.Services.CloudFunctions;
 using Main.ViewModel;
 using Main.ViewModel.UserViewModel;
 using Microsoft.AspNetCore.Authorization;
@@ -156,7 +158,7 @@ namespace Main.Controllers
         }
 
         [HttpPut("/v1/users/ChangePic")]
-        public async Task<ActionResult> PostAsync([FromServices] DbContextAccount context, [FromBody] ChangePicUserViewModel model)
+        public async Task<ActionResult> PostAsync([FromServices] DbContextAccount context, [FromServices] AzureFunctions azureFunctions, [FromBody] ChangePicUserViewModel model)
         {
             try
             {
@@ -170,19 +172,10 @@ namespace Main.Controllers
                 }
 
                 var imageName = User.Identity.Name + "_ProfilePic.jpeg";
-                var imageBase64 = new Regex(@"^data:image\/[a-z]+;base64,").Replace(model.Base64Image, "");
-                var file = Convert.FromBase64String(imageBase64);
-                
-                CloudStorageAccount cloudStorageAccount = CloudStorageAccount.Parse(Configuration.AzureBlobConnectionString);
-                CloudBlobClient cloudBlobClient = cloudStorageAccount.CreateCloudBlobClient();
-                CloudBlobContainer cloudBlobContainer = cloudBlobClient.GetContainerReference("containeruserimages");
-                var blob = await cloudBlobContainer.GetBlobReferenceFromServerAsync(imageName);
-                await blob.DeleteIfExistsAsync();
-                
-                using (var stream = new MemoryStream(file))
-                {
-                    await blob.DownloadToStreamAsync(stream);
-                }
+                azureFunctions.DeleteFileIfExists(Configuration.AzureBlobContainerImageUser, imageName);
+                var absoluteUri = await azureFunctions.UploadFile(Configuration.AzureBlobContainerImageUser, imageName, model.Base64Image);
+
+                user.linkProfileImage = absoluteUri;
 
                 context.Update(user);
                 await context.SaveChangesAsync(); 
@@ -191,7 +184,7 @@ namespace Main.Controllers
             }
             catch (RequestFailedException)
             {
-                return BadRequest(new ResponseViewModel<string>("AZ-08 - Ocorreu um erro no upload da imagem"));
+                return BadRequest(new ResponseViewModel<string>("AZ-01 - Ocorreu um erro no upload da imagem"));
             }
             catch (DbException)
             {
