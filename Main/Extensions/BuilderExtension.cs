@@ -18,7 +18,7 @@ namespace Main.Extension
                 .ConfigureApiBehaviorOptions(options => options.SuppressModelStateInvalidFilter = true)
                 .AddJsonOptions(options => options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles);
             builder.Services.AddTransient<TokenService>();
-            builder.Services.AddTransient<AzureFunctions>();
+            builder.Services.AddTransient<AzureServices>();
             builder.Services.AddAuthentication(options =>
             {
                 options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
