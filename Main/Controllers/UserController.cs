@@ -1,10 +1,4 @@
-﻿using System.ComponentModel;
-using System.Data;
-using System.Data.Common;
-using System.IO;
-using System.Net;
-using System.Reflection.Metadata;
-using System.Text.RegularExpressions;
+﻿using System.Data.Common;
 using Azure;
 using Main.DbContextSistema;
 using Main.Extension;
@@ -13,15 +7,9 @@ using Main.Services.CloudFunctions;
 using Main.ViewModel;
 using Main.ViewModel.UserViewModel;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Formatters;
-using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
-using Microsoft.WindowsAzure.Storage;
-using Microsoft.WindowsAzure.Storage.Blob;
 using SecureIdentity.Password;
 
 namespace Main.Controllers
@@ -29,7 +17,7 @@ namespace Main.Controllers
     [ApiController]
     public class UserController : ControllerBase
     {
-        [Authorize(Roles = "administrador")]
+        [Authorize(Roles = Consts.RoleConstante.ADMIN)]
         [HttpPost("/v1/users")]
         public async Task<ActionResult> CreateAsync([FromServices] DbContextAccount context,
             [FromBody] EditorUserViewModel model)
@@ -72,7 +60,7 @@ namespace Main.Controllers
             }
         }
 
-        [Authorize(Roles = "administrador")]
+        [Authorize(Roles = Consts.RoleConstante.ADMIN)]
         [HttpGet("/v1/users")]
         public async Task<ActionResult> GetAsync([FromServices] DbContextAccount context,
             [FromQuery] int pageNumber = 0, [FromQuery] int pageSize = 25)
@@ -81,6 +69,7 @@ namespace Main.Controllers
             {
                 var users = await context
                     .Users
+                    .Include(x => x.Roles)
                     .AsNoTracking()
                     .OrderBy(x => x.Id)
                     .Skip(pageNumber * pageSize)
@@ -99,7 +88,7 @@ namespace Main.Controllers
             }
         }
 
-        [Authorize(Roles = "administrador")]
+        [Authorize(Roles = Consts.RoleConstante.ADMIN)]
         [HttpGet("/v1/users/{id}")]
         public async Task<ActionResult> GetByIdAsync([FromServices] DbContextAccount context, [FromRoute] int id)
         {
@@ -107,6 +96,7 @@ namespace Main.Controllers
             {
                 var user = await context
                     .Users
+                    .Include(x => x.Roles)
                     .AsNoTracking()
                     .FirstOrDefaultAsync(x => x.Id == id);
 
@@ -127,7 +117,7 @@ namespace Main.Controllers
             }
         }
 
-        [Authorize(Roles = "administrador")]
+        [Authorize(Roles = Consts.RoleConstante.ADMIN)]
         [HttpDelete("/v1/users/{id}")]
         public async Task<ActionResult> DeleteAsync([FromServices] DbContextAccount context, [FromRoute] int id)
         {
@@ -157,8 +147,9 @@ namespace Main.Controllers
             }
         }
 
+
         [HttpPut("/v1/users/ChangePic")]
-        public async Task<ActionResult> PostAsync([FromServices] DbContextAccount context, [FromServices] AzureFunctions azureFunctions, [FromBody] ChangePicUserViewModel model)
+        public async Task<ActionResult> PostAsync([FromServices] DbContextAccount context, [FromServices] AzureService azureService, [FromBody] ChangePicUserViewModel model)
         {
             try
             {
@@ -172,8 +163,8 @@ namespace Main.Controllers
                 }
 
                 var imageName = User.Identity.Name + "_ProfilePic.jpeg";
-                azureFunctions.DeleteFileIfExists(Configuration.AzureBlobContainerImageUser, imageName);
-                var absoluteUri = await azureFunctions.UploadFile(Configuration.AzureBlobContainerImageUser, imageName, model.Base64Image);
+                azureService.DeleteFileIfExists(Configuration.AzureBlobContainerImageUser, imageName);
+                var absoluteUri = await azureService.UploadFile(Configuration.AzureBlobContainerImageUser, imageName, model.Base64Image);
 
                 user.linkProfileImage = absoluteUri;
 

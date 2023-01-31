@@ -4,7 +4,6 @@ using Main.Models;
 using Main.Services;
 using Main.ViewModel;
 using Main.ViewModel.AccountViewModel;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using SecureIdentity.Password;
@@ -16,7 +15,7 @@ namespace Main.Controllers
     public class AccountController : ControllerBase
     {
         [HttpPost("/v1/Login")]
-        public async Task<ActionResult> Get([FromServices] DbContextAccount context, [FromServices] TokenService tokenService, [FromBody] LoginViewModel model)
+        public async Task<ActionResult> GetAsync([FromServices] DbContextAccount context, [FromServices] TokenService tokenService, [FromBody] LoginViewModel model)
         {
             try
             {
@@ -47,8 +46,8 @@ namespace Main.Controllers
         }
 
         [HttpPost("/v1/CreateAccount")]
-        public async Task<ActionResult> CreateAsync([FromServices] DbContextAccount context,
-            [FromBody] EditorAccountViewModel model)
+        public async Task<ActionResult> CreateAccountAsync([FromServices] DbContextAccount context,
+            [FromBody] EditorAccountViewModel model, [FromServices] EmailService emailService)
         {
             if (!ModelState.IsValid)
             {
@@ -57,7 +56,7 @@ namespace Main.Controllers
 
             try
             {
-                var role = await context.Roles.FirstOrDefaultAsync(r => r.Name == "usuario");
+                var role = await context.Roles.FirstOrDefaultAsync(r => r.Name == Consts.RoleConstante.USER);
 
                 if (role == null)
                 {
@@ -75,6 +74,8 @@ namespace Main.Controllers
 
                 await context.Users.AddAsync(user);
                 await context.SaveChangesAsync();
+
+                emailService.Send(model.Email, model.Name);
 
                 return Created($"/{user.Slug}", new ResponseViewModel<User>(user));
             }

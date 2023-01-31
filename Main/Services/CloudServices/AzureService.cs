@@ -4,7 +4,7 @@ using System.Text.RegularExpressions;
 
 namespace Main.Services.CloudFunctions
 {
-    public class AzureFunctions : ICloudFunctions
+    public class AzureService : ICloudServices
     {
         public async void DeleteFileIfExists(string containerName, string imageName)
         {

@@ -1,6 +1,6 @@
 ﻿namespace Main.Services.CloudFunctions
 {
-    public interface ICloudFunctions
+    public interface ICloudServices
     {
         public void DeleteFileIfExists(string containerName, string imageName);
 
