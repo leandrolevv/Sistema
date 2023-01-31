@@ -1,3 +1,6 @@
+using System.Globalization;
+using System.Text;
+using System.Text.RegularExpressions;
 using Main;
 using Main.Extension;
 
@@ -9,5 +12,5 @@ var app = builder.Build();
 app.MapControllers();
 app.UseAuthentication();
 app.UseAuthorization();
-
+app.UseHttpsRedirection();
 app.Run();

@@ -46,8 +46,8 @@ namespace Main.Controllers
         }
 
         [HttpPost("/v1/CreateAccount")]
-        public async Task<ActionResult> CreateAsync([FromServices] DbContextAccount context,
-            [FromBody] EditorAccountViewModel model)
+        public async Task<ActionResult> CreateAccountAsync([FromServices] DbContextAccount context,
+            [FromBody] EditorAccountViewModel model, [FromServices] EmailService emailService)
         {
             if (!ModelState.IsValid)
             {
@@ -56,7 +56,7 @@ namespace Main.Controllers
 
             try
             {
-                var role = await context.Roles.FirstOrDefaultAsync(r => r.Name == "usuario");
+                var role = await context.Roles.FirstOrDefaultAsync(r => r.Name == Consts.RoleConstante.USER);
 
                 if (role == null)
                 {
@@ -74,6 +74,8 @@ namespace Main.Controllers
 
                 await context.Users.AddAsync(user);
                 await context.SaveChangesAsync();
+
+                emailService.Send(model.Email, model.Name);
 
                 return Created($"/{user.Slug}", new ResponseViewModel<User>(user));
             }

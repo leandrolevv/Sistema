@@ -1,7 +1,8 @@
 ﻿namespace Main
 {
-    public static class Constantes
+    public static class Consts
     {
+        public const string SYSNAME = "Sistema portifólio";
         public static class RoleConstante
         {
             public const string ADMIN = "administrador";

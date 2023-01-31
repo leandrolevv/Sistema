@@ -13,7 +13,7 @@ namespace Main.Controllers
     [ApiController]
     public class RoleController : ControllerBase
     {
-        [Authorize(Roles = Constantes.RoleConstante.ADMIN)]
+        [Authorize(Roles = Consts.RoleConstante.ADMIN)]
         [HttpPost("v1/roles")]
         public async Task<ActionResult> CreateAsync([FromServices] DbContextAccount context,
             [FromBody] EditorRoleViewModel model)
@@ -65,7 +65,7 @@ namespace Main.Controllers
             }
         }
 
-        [Authorize(Roles = Constantes.RoleConstante.ADMIN)]
+        [Authorize(Roles = Consts.RoleConstante.ADMIN)]
         [HttpDelete("/v1/roles/{id}")]
         public async Task<ActionResult> DeleteAsync([FromServices] DbContextAccount context, [FromRoute] int id)
         {

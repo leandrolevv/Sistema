@@ -14,11 +14,15 @@ namespace Main.Extension
         {
             var _connectionString = builder.Configuration.GetConnectionString("Default");
             builder.Services.AddDbContext<DbContextAccount>(options => options.UseSqlServer(_connectionString));
+
+            builder.Services.AddTransient<TokenService>();
+            builder.Services.AddTransient<AzureService>();
+            builder.Services.AddTransient<EmailService>();
+
             builder.Services.AddControllers()
                 .ConfigureApiBehaviorOptions(options => options.SuppressModelStateInvalidFilter = true)
                 .AddJsonOptions(options => options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles);
-            builder.Services.AddTransient<TokenService>();
-            builder.Services.AddTransient<AzureServices>();
+
             builder.Services.AddAuthentication(options =>
             {
                 options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
